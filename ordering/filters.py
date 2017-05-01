@@ -1,34 +1,19 @@
-from flask import request
 from . import app
 
 
-def url_form(episode_name):
+def name_to_url(episode_name):
     return episode_name.replace(' ', '_')
 
 
-@app.template_filter('episode_url')
 def episode_url_filter(episode_name, series):
     root_url = app.config['SHOW_DICT'][series]['root']
-    wikipedia = 'wikipedia' in root_url
-    if episode_name == 'Pilot' or wikipedia:
-        return root_url + url_form(episode_name + ' (%s)' % series)
-    else:
-        return root_url + url_form(episode_name)
+    wikipedia_url = 'wikipedia' in root_url
+    pilot_episode = episode_name.upper() == 'PILOT'
 
+    name_as_url = name_to_url(episode_name)
+    series_as_url = name_to_url(f'({series})')
 
-@app.context_processor
-def inject_oldest_first_url():
-    if request.url.endswith('/newest_first'):
-        return {'oldest_first_url': '/'.join(request.url.split('/')[:-1])}
-    else:
-        return {'oldest_first_url': None}
+    if pilot_episode or wikipedia_url:
+        name_as_url = f'{name_as_url}_{series_as_url}'
 
-
-@app.context_processor
-def inject_newest_first():
-    return {'newest_first': request.url.endswith('/newest_first')}
-
-
-@app.context_processor
-def inject_show_dict():
-    return {'series_map': app.config['SHOW_DICT']}
+    return f'{root_url}{name_as_url}'
