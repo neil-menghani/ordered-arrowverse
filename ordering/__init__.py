@@ -1,15 +1,21 @@
-from flask import Flask
-from flask.ext.cache import Cache
+from sanic import Sanic
+from sanic_jinja2 import SanicJinja2
 
-from .url_converters import ListConverter
+from .blueprints import register_blueprints
 
-app = Flask(__name__)
 
+# Initializing Sanic app
+app = Sanic(__name__)
+
+# Jinja2 Setup
+jinja2 = SanicJinja2()
+jinja2.init_app(app)
+# Make it easy to get render function in views
+render = jinja2.render
+
+# Config
 app.config.from_pyfile('settings.py')
+app.static(app.config.STATIC_URL, file_or_directory=app.config.STATIC_ROOT)
 
-app.cache = Cache(app)
-
-app.url_map.converters['list'] = ListConverter
-
-from . import filters
-from . import views
+# Blueprints
+register_blueprints()
