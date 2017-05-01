@@ -61,8 +61,8 @@
       <a href="#end" id="top">
         <small>END</small>
       </a> |
-      {% if newest_first %}
-        <a href="{{ oldest_first_url }}">
+      {% if request.newest_first %}
+        <a href="{{ request.oldest_first_url }}">
           <small>OLDEST FIRST</small>
         </a>
       {% else %}
@@ -87,7 +87,8 @@
       </thead>
       <tbody>
         {% for row in table_content %}
-          <tr class='episode {{ series_map[row.series].id }}' data-href="{{ row.episode_name | episode_url(row.series) }}">
+          <tr class='episode {{ series_map[row.series].id }}'
+              data-href="{{ row.episode_name | episode_url(row.series) }}">
             <td>{{ row.row_number }}</td>
             <td>{{ row.series }}</td>
             <td>{{ row.episode_id }}</td>
