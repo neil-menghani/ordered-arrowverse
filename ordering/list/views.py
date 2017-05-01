@@ -20,6 +20,8 @@ class Index(HTTPMethodView):
 
 class IndexWithHiddenSeries(HTTPMethodView):
     async def get(self, request, hide_list, newest_first=None):
+        hide_list = hide_list.split('+')
+
         episode_list = get_full_series_episode_list(hide_list)
 
         if newest_first == 'newest_first':
