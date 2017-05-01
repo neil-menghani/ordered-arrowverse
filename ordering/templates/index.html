@@ -1,121 +1,203 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
-    <title>Arrowverse Episode Order</title>
-    <link type="image/png" href="/static/favicon.png" rel="icon">
-    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/css/index.css">
+  <meta charset="UTF-8">
+  <title>Arrowverse Episode Order</title>
+
+  <link type="image/png" href="/static/favicon.png" rel="icon">
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/css/index.css">
 </head>
 <body>
-<main class="container">
+  <main class="container">
+
     <h1>
-        Arrowverse Episode Order <a href="https://github.com/AceFire6/ordered-arrowverse" target="_blank" type="button" class="btn btn-default btn-sm center-block">
-        Project on Github</a>
+      Arrowverse Episode Order
+      <a href="https://github.com/AceFire6/ordered-arrowverse"
+         target="_blank"
+         type="button"
+         class="btn btn-default btn-sm center-block">
+        Project on Github
+      </a>
     </h1>
+
     <hr>
+
     <div class="pull-left">
-        <form class="form-inline">
-            <button type="button" id="filter-button" class="btn btn-xs btn-default">Filter</button>
-            <label>
-                <input type="checkbox" id="arrow" class="filter-option" {% if 'arrow' in hidden_list %}checked{% endif %}> Hide Arrow
-            </label>
-            <label>
-                <input type="checkbox" id="flash" class="filter-option" {% if 'flash' in hidden_list %}checked{% endif %}> Hide The Flash
-            </label>
-            <label>
-                <input type="checkbox" id="legends" class="filter-option" {% if 'legends' in hidden_list %}checked{% endif %}> Hide Legends of Tomorrow
-            </label>
-            <label>
-                <input type="checkbox" id="supergirl" class="filter-option" {% if 'supergirl' in hidden_list %}checked{% endif %}> Hide Supergirl
-            </label>
-        </form>
+      <form class="form-inline">
+        <button type="button" id="filter-button" class="btn btn-xs btn-default">Filter</button>
+        <label>
+          <input type="checkbox"
+                 id="arrow"
+                 class="filter-option"
+                 {% if 'arrow' in hidden_list %}checked{% endif %}>
+          Hide Arrow
+        </label>
+        <label>
+          <input type="checkbox"
+                 id="flash"
+                 class="filter-option"
+                 {% if 'flash' in hidden_list %}checked{% endif %}>
+          Hide The Flash
+        </label>
+        <label>
+          <input type="checkbox"
+                 id="legends"
+                 class="filter-option"
+                 {% if 'legends' in hidden_list %}checked{% endif %}>
+          Hide Legends of Tomorrow
+        </label>
+        <label>
+          <input type="checkbox"
+                 id="supergirl"
+                 class="filter-option"
+                 {% if 'supergirl' in hidden_list %}checked{% endif %}>
+          Hide Supergirl
+        </label>
+      </form>
     </div>
+
     <div class="pull-right">
-        <a href="#end" id="top"><small>END</small></a> |
-        {% if newest_first %}
-            <a href="{{ oldest_first_url }}"><small>OLDEST FIRST</small></a>
-        {% else %}
-            <a href="newest_first"><small>NEWEST FIRST</small></a>
-        {% endif %}
-        | <a href="#" id="no-color"><small class="text">DISABLE COLOR</small></a>
+      <a href="#end" id="top">
+        <small>END</small>
+      </a> |
+      {% if newest_first %}
+        <a href="{{ oldest_first_url }}">
+          <small>OLDEST FIRST</small>
+        </a>
+      {% else %}
+        <a href="newest_first">
+          <small>NEWEST FIRST</small>
+        </a>
+      {% endif %} |
+      <a href="#" id="no-color">
+        <small class="text">DISABLE COLOR</small>
+      </a>
     </div>
+
     <table class="table table-bordered" id="episode-list">
-        <thead>
+      <thead>
         <tr>
-            <th>#</th>
-            <th>Series</th>
-            <th>Episode</th>
-            <th>Name</th>
-            <th>Original Air Date</th>
+          <th>#</th>
+          <th>Series</th>
+          <th>Episode</th>
+          <th>Name</th>
+          <th>Original Air Date</th>
         </tr>
-        </thead>
-        <tbody>
+      </thead>
+      <tbody>
         {% for row in table_content %}
-            <tr class='episode {{ series_map[row.series].id }}' data-href="{{ row.episode_name | episode_url(row.series) }}">
-              <td>{{ row.row_number }}</td>
-              <td>{{ row.series }}</td>
-              <td>{{ row.episode_id }}</td>
-              <td>{{ row.episode_name }}</td>
-              <td>{{ row.air_date }}</td>
-            </tr>
+          <tr class='episode {{ series_map[row.series].id }}' data-href="{{ row.episode_name | episode_url(row.series) }}">
+            <td>{{ row.row_number }}</td>
+            <td>{{ row.series }}</td>
+            <td>{{ row.episode_id }}</td>
+            <td>{{ row.episode_name }}</td>
+            <td>{{ row.air_date }}</td>
+          </tr>
         {% endfor %}
-        </tbody>
+      </tbody>
     </table>
+
     <a href="#top" id="end">BACK TO TOP</a>
+
     <div id="footer-buttons">
-        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#contact">
-            <small>Contact Me</small>
-        </button>
-        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#acknowledgements">
-            <small>Acknowledgements</small>
-        </button>
+      <button type="button"
+              class="btn btn-default btn-sm"
+              data-toggle="modal"
+              data-target="#contact">
+        <small>Contact Me</small>
+      </button>
+      <button type="button"
+              class="btn btn-default btn-sm"
+              data-toggle="modal"
+              data-target="#acknowledgements">
+        <small>Acknowledgements</small>
+      </button>
     </div>
+
     <div class="modal fade" id="acknowledgements">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Acknowledgements</h4>
-                </div>
-                <div class="modal-body">
-                    Content is drawn from:
-                    <ul>
-                        <li><a href="http://arrow.wikia.com/wiki/List_of_Arrow_episodes" target="_blank">List of Arrow Episodes</a></li>
-                        <li><a href="http://arrow.wikia.com/wiki/List_of_The_Flash_episodes" target="_blank">List of The Flash Episodes</a></li>
-                        <li><a href="http://arrow.wikia.com/wiki/List_of_DC%27s_Legends_of_Tomorrow_episodes" target="_blank">List of DC's Legends of Tomorrow Episodes</a></li>
-                        <li><a href="https://en.wikipedia.org/wiki/List_of_Supergirl_episodes" target="_blank">List of Supergirl Episodes</a></li>
-                    </ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Acknowledgements</h4>
+          </div>
+
+          <div class="modal-body">
+            Content is drawn from:
+            <ul>
+              <li>
+                <a href="http://arrow.wikia.com/wiki/List_of_Arrow_episodes" target="_blank">
+                  List of Arrow Episodes
+                </a>
+              </li>
+              <li>
+                <a href="http://arrow.wikia.com/wiki/List_of_The_Flash_episodes" target="_blank">
+                  List of The Flash Episodes
+                </a>
+              </li>
+              <li>
+                <a href="http://arrow.wikia.com/wiki/List_of_DC%27s_Legends_of_Tomorrow_episodes"
+                   target="_blank">
+                  List of DC's Legends of Tomorrow Episodes
+                </a>
+              </li>
+              <li>
+                <a href="https://en.wikipedia.org/wiki/List_of_Supergirl_episodes" target="_blank">
+                  List of Supergirl Episodes
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
     <div class="modal fade" id="contact">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Contact</h4>
-                    </div>
-                    <div class="modal-body text-center">
-                        <p>Made by Jethro Muller</p>
-                        <p>To contact me, <a href="mailto:git+ordering@jethromuller.co.za" target="_blank" type="email">email me</a>.</p>
-                        <p>Or, view my other projects on <a href="http://www.github.com/AceFire6" target="_blank">Github</a>.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Contact</h4>
+          </div>
+
+          <div class="modal-body text-center">
+            <p>Made by Jethro Muller</p>
+            <p>
+              To contact me, <a href="mailto:git+ordering@jethromuller.co.za" target="_blank" type="email">email me</a>.
+            </p>
+            <p>
+              Or, view my other projects on <a href="http://www.github.com/AceFire6" target="_blank">Github</a>.
+            </p>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">
+              Close
+            </button>
+          </div>
+
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    {# START Javascript #}
     <script type="text/javascript" rel="script" src="/static/js/jquery.min.js"></script>
     <script type="text/javascript" rel="script" src="/static/js/bootstrap.min.js"></script>
     <script type="text/javascript" rel="script" src="/static/js/cookie.js"></script>
     <script type="text/javascript" rel="script" src="/static/js/index.js"></script>
-</main>
+    {# END Javascript #}
+  </main>
 </body>
 </html>
