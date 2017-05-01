@@ -11,34 +11,38 @@ from . import app
 def get_episode_list(series_soup, series):
     episode_list = []
     season = 0
-    wikipedia = 'wikipedia' in app.config['SHOW_DICT'][series]['root']
+    wikipedia_url = 'wikipedia' in app.config['SHOW_DICT'][series]['root']
 
-    if not wikipedia:
-        tables = series_soup.find_all('table')
-    else:
+    if wikipedia_url:
         tables = series_soup.find_all('table', class_='wikiepisodetable')
+    else:
+        tables = series_soup.find_all('table')
 
     for table in tables:
         if 'series overview' in table.getText().lower():
             continue
+
         season += 1
-        if not wikipedia:
-            table = [
-                row.strip().split('\n')
-                for row in table.getText().split('\n\n') if row.strip()
-            ]
-        else:
+        if wikipedia_url:
             table = [
                 [j.getText() for j in itemgetter(1, 3, 5, 11)(i.contents)]
                 for i in table.find_all(class_='vevent')
             ]
+        else:
+            table = [
+                row.strip().split('\n')
+                for row in table.getText().split('\n\n') if row.strip()
+            ]
 
         for row in table:
-            if wikipedia:
+            if wikipedia_url:
                 row[-1] = row[-1].split('(')[0].replace(u'\xa0', ' ').strip()
+
             episode_name = row[-2].replace('"', '')
+
             if '[' in episode_name:
                 episode_name = episode_name.split('[')[0]
+
             episode_num = row[-3]
             try:
                 date = row[-1]
@@ -49,10 +53,9 @@ def get_episode_list(series_soup, series):
                 continue
 
             if air_date and 'TBA' not in row:
-                episode_id = 'S{:>02}E{:>02}'.format(season, episode_num)
                 episode_data = {
                     'series': series,
-                    'episode_id': episode_id,
+                    'episode_id': f'S{season:>02}E{episode_num:>02}',
                     'episode_name': episode_name,
                     'air_date': air_date,
                 }
@@ -62,6 +65,7 @@ def get_episode_list(series_soup, series):
 
 def sort_episodes(show_list_set):
     full_list = []
+
     for show_list in show_list_set:
         full_list.extend(show_list)
 
@@ -72,10 +76,16 @@ def sort_episodes(show_list_set):
     if len(full_list) > 80:
         problem_episodes = (full_list[78], full_list[79])
 
-        one_is_flash = any(map(lambda x: x['series'].upper() == 'THE FLASH', problem_episodes))
-        one_is_arrow = any(map(lambda x: x['series'].upper() == 'ARROW', problem_episodes))
+        one_is_arrow = False
+        one_is_flash = False
 
-        both_are_episode_17 = all(map(lambda x: x['episode_id'].endswith('E17'), problem_episodes))
+        for episode in problem_episodes:
+            one_is_arrow = one_is_arrow or episode['series'].upper() == 'ARROW'
+            one_is_flash = one_is_flash or episode['series'].upper() == 'THE FLASH'
+
+        both_are_episode_17 = all(
+            episode['episode_id'].endswith('E17') for episode in problem_episodes
+        )
 
         if one_is_arrow and one_is_flash and both_are_episode_17:
             full_list[78], full_list[79] = full_list[79], full_list[78]
@@ -89,20 +99,24 @@ def sort_episodes(show_list_set):
     return full_list
 
 
-@app.cache.memoize(timeout=43200)
+# @app.cache.memoize(timeout=43200)
 def get_url_content(url):
     return requests.get(url).content
 
 
-def get_full_series_episode_list(excluded_series=list()):
+def get_full_series_episode_list(excluded_series=None):
+    excluded_series = excluded_series or []
     show_list_set = []
+
     for show in app.config['SHOWS']:
         if show['id'] not in excluded_series:
-            show_html = get_url_content(show['root'] + show['url'])
-            show_list = get_episode_list(
-                BeautifulSoup(show_html, 'html.parser'),
-                show['name']
-            )
+            show_url = show['root'] + show['url']
+
+            show_html = get_url_content(show_url)
+
+            series_soup = BeautifulSoup(show_html, 'html.parser')
+            show_list = get_episode_list(series_soup, show['name'])
+
             show_list_set.append(show_list)
 
     return sort_episodes(show_list_set)
